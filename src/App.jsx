@@ -22,12 +22,23 @@ class App extends Component {
   ]
 }
 }
+
+addMessage = (newMessage) => {
+  const messageObj = {
+    username: this.state.currentUser.name,
+    content: newMessage,
+    key:this.state.messages.length + 1
+  }
+  const messages = this.state.messages.concat(messageObj)
+  this.setState({messages: messages});
+}
+
   componentDidMount() {
-    // After 3 seconds, set `loading` to false in the state.
     setTimeout(() => {
-      this.setState({loading:false});
+      this.setState({loading:false})
     }, 3000)
   }
+
   render() {
    if(this.state.loading){
     return (<h1>Loading...</h1>)
@@ -38,7 +49,7 @@ class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages = {this.state.messages}/>
-        <Chatbar currentUser = {this.state.currentUser} />
+        <Chatbar currentUser = {this.state.currentUser.name} addMessage = {this.addMessage} />
       </div>
     )
    }
@@ -46,6 +57,10 @@ class App extends Component {
 }
 
 export default App;
+
+
+
+
 
 
 
