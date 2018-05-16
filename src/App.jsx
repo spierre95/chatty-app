@@ -85,7 +85,7 @@ componentDidMount() {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
-          {this.users}
+          <div className = "users-counter">users online: {this.users}</div>
         </nav>
         <MessageList messages = {this.state.messages}/>
         <Chatbar currentUser = {this.state.currentUser.name} addMessage = {this.addMessage} addUsername = {this.addUsername} />
