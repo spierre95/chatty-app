@@ -24,6 +24,10 @@ class App extends Component {
     console.log(this.state)
   }
 
+  addUsername = (newUser) => {
+    console.log(newUser)
+    this.setState({currentUser:{name:newUser}})
+  }
 
 
 
@@ -53,7 +57,7 @@ class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages = {this.state.messages}/>
-        <Chatbar currentUser = {this.state.currentUser.name} addMessage = {this.addMessage} />
+        <Chatbar currentUser = {this.state.currentUser.name} addMessage = {this.addMessage} addUsername = {this.addUsername} />
       </div>
     )
    }
