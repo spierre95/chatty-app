@@ -6,6 +6,7 @@ import MessageList from './MessageList.jsx';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.socket = null;
     this.state =  {
   loading:true,
   currentUser: {name: "Bob"},
@@ -30,6 +31,7 @@ addMessage = (newMessage) => {
     content: newMessage,
     key:this.state.messages.length + 1
   }
+  this.socket.send(JSON.stringify(messageObj));
   const messages = this.state.messages.concat(messageObj)
   this.setState({messages: messages});
 }
