@@ -11,12 +11,10 @@ class App extends Component {
       loading:true,
       currentUser: {name: "Bob"},
       messages:[],
-      notification:{
-        type:"",
-        content:""
-      }
+
     }
     this.addMessage = this.addMessage.bind(this)
+    this.users = 0
   }
 
   addMessage = (newMessage) => {
@@ -49,19 +47,22 @@ componentDidMount() {
   };
 
   this.socket.onmessage = (event) => {
-    console.log(event);
-    // The socket event data is encoded as a JSON string.
-    // This line turns it into an object
+
+
     const data = JSON.parse(event.data);
+
+    this.users = data.numberOfUsers
+
     switch(data.type) {
       case "incomingMessage":
       const messages = this.state.messages.concat(data)
       this.setState({messages:messages})
         break;
       case "incomingNotification":
-      this.setState({notification:{type:"incomingNotification",content:data.content}})
-      console.log(this.state.notification.type)
-      console.log(this.state.notification.content)
+      const notifications = this.state.messages.concat(data)
+      this.setState({messages:notifications})
+      console.log(this.state.messages.type)
+      console.log(this.state.messages.content)
 
         break;
       default:
@@ -84,8 +85,9 @@ componentDidMount() {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          {this.users}
         </nav>
-        <MessageList messages = {this.state.messages} notification = {this.state.notification}/>
+        <MessageList messages = {this.state.messages}/>
         <Chatbar currentUser = {this.state.currentUser.name} addMessage = {this.addMessage} addUsername = {this.addUsername} />
       </div>
     )

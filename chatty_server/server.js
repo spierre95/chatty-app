@@ -19,17 +19,13 @@ const wss = new SocketServer({ server });
 
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
-      console.log(data)
       client.send(data);
   });
 };
 
-// Set up a callback that will run when a client connects to the server
-// When a client connects they are assigned a socket, represented by
-// the ws parameter in the callback.
 wss.on('connection', (ws) => {
   console.log('Client connected');
-
+  wss.broadcast(JSON.stringify({numberOfUsers:wss.clients.size}))
 ws.on('message', function incoming(data) {
   const postData = JSON.parse(data)
   if(postData.type == "postMessage"){
@@ -37,6 +33,7 @@ ws.on('message', function incoming(data) {
     postData.type = "incomingMessage"
     wss.broadcast(JSON.stringify(postData))
   } else if(postData.type == "postNotification"){
+    postData['key'] = uuidv4();
     postData.type = "incomingNotification"
     wss.broadcast(JSON.stringify(postData))
   }
