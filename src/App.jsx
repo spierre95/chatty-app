@@ -8,40 +8,39 @@ class App extends Component {
     super(props);
     this.socket = null;
     this.state =  {
-  loading:true,
-  currentUser: {name: "Bob"},
-  messages: [
-    {
-      username: "Bob",
-      content: "Has anyone seen my marbles?",
-      key:1
-    },
-    {
-      username: "Anonymous",
-      content: "No, I think you lost them. You lost your marbles Bob. You lost them for good.",
-      key:2
+      loading:true,
+      currentUser: {name: "Bob"},
+      messages:[]
     }
-  ]
-}
-}
-
-addMessage = (newMessage) => {
-  const messageObj = {
-    username: this.state.currentUser.name,
-    content: newMessage,
-    key:this.state.messages.length + 1
+    this.addMessage = this.addMessage.bind(this)
   }
-  this.socket.send(JSON.stringify(messageObj));
-  const messages = this.state.messages.concat(messageObj)
-  this.setState({messages: messages});
-}
+
+  addMessage = (newMessage) => {
+    const messageObj = {
+      username: this.state.currentUser.name,
+      content: newMessage,
+    }
+    this.socket.send(JSON.stringify(messageObj));
+    console.log(this.state)
+  }
+
+
+
 
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001')
-    console.log(this.socket)
+    this.socket.onmessage = (event) => {
+      const newMessage = JSON.parse(event.data)
+      console.log(this)
+      const messages = this.state.messages.concat(newMessage)
+      console.log(this.state.messages)
+      this.setState({messages:messages})
+    }
+
     setTimeout(() => {
       this.setState({loading:false})
     }, 3000)
+
   }
 
   render() {

@@ -1,5 +1,5 @@
 // server.js
-
+const uuidv4 = require('uuid/v4');
 const express = require('express');
 const SocketServer = require('ws').Server;
 
@@ -22,8 +22,13 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
 
 ws.on('message', function incoming(data) {
-  console.log(JSON.parse(data));
+  const fromClient = JSON.parse(data)
+  fromClient['key'] = uuidv4();
+  ws.send(JSON.stringify(fromClient))
 });
+
+
+
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => console.log('Client disconnected'));
