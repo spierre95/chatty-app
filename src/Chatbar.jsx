@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 
-
-
 class Chatbar extends Component {
 
 handleKeyPress = (evt) => {
   if(evt.key == 'Enter'){
     const message = evt.target.value
-
     this.props.addMessage(message)
+    evt.target.value = ""
 
   }
 

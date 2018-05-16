@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Chatbar from './Chatbar.jsx';
 import MessageList from './MessageList.jsx';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +35,8 @@ addMessage = (newMessage) => {
 }
 
   componentDidMount() {
+    this.socket = new WebSocket('ws://localhost:3001')
+    console.log(this.socket)
     setTimeout(() => {
       this.setState({loading:false})
     }, 3000)
