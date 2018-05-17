@@ -26,17 +26,37 @@ wss.on('connection', (ws) => {
 
  const usersOnline = wss.clients.size
 
-  console.log(wss.clients.size)
 
 ws.on('message', function incoming(data) {
 
   const postData = JSON.parse(data)
-  console.log(postData)
+  const regEx = (/(http(s?):)|([/|.|\w|\s])*\.(?:jpg|gif|png)/)
+  const message = postData.content
+
 
   if(postData.notification.type == "postMessage"){
 
       console.log("postMessage",postData.notification.type)
       postData['key'] = uuidv4();
+
+     if(regEx.test(message)){
+        const messageArr = message.split(" ");
+        console.log('before loop',messageArr)
+        messageArr.forEach((value,index)=>{
+          console.log('value',value)
+          console.log('index',index)
+          if(regEx.test(value)){
+            postData['image_url'] = value;
+            messageArr.splice(index,1)
+            console.log('after loop',messageArr);
+          }
+        })
+        const content = messageArr.join(' ')
+        postData.content = content;
+      }
+
+      console.log(postData);
+
       postData.notification.type = "incomingMessage"
       wss.broadcast(JSON.stringify(postData))
 
@@ -69,6 +89,25 @@ ws.on('message', function incoming(data) {
     wss.broadcast(JSON.stringify({numberOfUsers:wss.clients.size}))
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

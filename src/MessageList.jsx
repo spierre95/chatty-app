@@ -11,7 +11,7 @@ class MessageList extends React.Component {
         <span className="notification-content">{this.props.messages.content}</span>
         </div>)
     }
-     return (<Message currentUser ={message.username} color ={message.color} message = {message.content} key={message.key}/>)
+     return (<Message currentUser ={message.username} color ={message.color} message = {message.content} key={message.key} image= {message.image_url}/>)
    })
    return (
     <div>

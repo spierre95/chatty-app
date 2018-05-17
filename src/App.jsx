@@ -12,7 +12,8 @@ class App extends Component {
       loading:true,
       currentUser: {name: "Bob", color :null},
       messages:[],
-      usersOnline:0
+      usersOnline:0,
+      image_url:null
     }
 
     this.addMessage = this.addMessage.bind(this)
@@ -61,6 +62,7 @@ componentDidMount() {
     switch(data.notification.type) {
       case "incomingMessage":
       const messages = this.state.messages.concat(data)
+      console.log(data.image_url)
       this.setState({messages:messages})
         break;
       case "incomingNotification":
