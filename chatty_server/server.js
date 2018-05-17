@@ -2,6 +2,9 @@
 const uuidv4 = require('uuid/v4');
 const express = require('express');
 const SocketServer = require('ws').Server;
+const fetch = require('node-fetch');
+const querystring = require('querystrings');
+
 
 // Set the port to 3001
 const PORT = 3001;
@@ -31,34 +34,48 @@ ws.on('message', function incoming(data) {
 
   const postData = JSON.parse(data)
   const regEx = (/(http(s?):)|([/|.|\w|\s])*\.(?:jpg|gif|png)/)
+  const regExGiphy = /^\/giphy (.+)$/
   const message = postData.content
 
 
   if(postData.notification.type == "postMessage"){
 
-      console.log("postMessage",postData.notification.type)
-      postData['key'] = uuidv4();
-
      if(regEx.test(message)){
         const messageArr = message.split(" ");
-        console.log('before loop',messageArr)
         messageArr.forEach((value,index)=>{
-          console.log('value',value)
-          console.log('index',index)
           if(regEx.test(value)){
             postData['image_url'] = value;
             messageArr.splice(index,1)
-            console.log('after loop',messageArr);
           }
         })
         const content = messageArr.join(' ')
         postData.content = content;
+        postData.notification.type = "incomingMessage"
+        console.log(postData)
+        wss.broadcast(JSON.stringify(postData))
+      } else if (regExGiphy.test(message)){
+        console.log('f u regEx !!!!!')
+        let matches = message.match(regExGiphy)
+        let qs = querystring.stringify({
+          api_key: 'dc4dsGHOce3L60BgjeYercyZXVsg9L5k',
+          tag: matches[1]
+        });
+        console.log(qs)
+        fetch(`https://api.giphy.com/v1/gifs/random?${qs}`)
+          .then( res => {return res.json() })
+          .then( json => {
+            postData['image_url'] = json.data.image_url
+            postData.content = ""
+            postData.notification.type = "incomingMessage"
+            console.log(postData)
+            wss.broadcast(JSON.stringify(postData))
+          })
+      } else {
+        postData.notification.type = "incomingMessage"
+        postData['key'] = uuidv4();
+        console.log(postData)
+        wss.broadcast(JSON.stringify(postData))
       }
-
-      console.log(postData);
-
-      postData.notification.type = "incomingMessage"
-      wss.broadcast(JSON.stringify(postData))
 
   } else if(postData.notification.type == "postNotification"){
 
@@ -89,31 +106,3 @@ ws.on('message', function incoming(data) {
     wss.broadcast(JSON.stringify({numberOfUsers:wss.clients.size}))
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

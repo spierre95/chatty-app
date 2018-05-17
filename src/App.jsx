@@ -63,6 +63,7 @@ componentDidMount() {
       case "incomingMessage":
       const messages = this.state.messages.concat(data)
       console.log(data.image_url)
+      console.log(data.giphy)
       this.setState({messages:messages})
         break;
       case "incomingNotification":

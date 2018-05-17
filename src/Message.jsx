@@ -16,3 +16,4 @@ class Message extends React.Component {
     export default Message;
 
 
+ // <span className="message-content" key={this.props.giphy.key}><img src={this.props.giphy.url}/></span>
