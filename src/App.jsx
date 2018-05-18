@@ -1,4 +1,3 @@
-
 import React, {Component} from 'react';
 import Chatbar from './Chatbar.jsx';
 import MessageList from './MessageList.jsx';
@@ -55,15 +54,10 @@ componentDidMount() {
   this.socket.onmessage = (event) => {
 
     const data = JSON.parse(event.data);
-
-    console.log(data.notification)
-    console.log(data.user)
-
+    console.log(data ,'data')
     switch(data.notification.type) {
       case "incomingMessage":
       const messages = this.state.messages.concat(data)
-      console.log(data.image_url)
-      console.log(data.giphy)
       this.setState({messages:messages})
         break;
       case "incomingNotification":
@@ -103,10 +97,3 @@ componentDidMount() {
 }
 
 export default App;
-
-
-
-
-
-
-

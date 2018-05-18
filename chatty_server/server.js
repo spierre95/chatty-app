@@ -42,18 +42,22 @@ ws.on('message', function incoming(data) {
 
      if(regEx.test(message)){
         const messageArr = message.split(" ");
+        postData['image_url'] = [];
+        const contentArr = []
         messageArr.forEach((value,index)=>{
-          if(regEx.test(value)){
-            postData['image_url'] = value;
-            messageArr.splice(index,1)
+          if(value.match(regEx)){
+            postData.image_url.push(value);
+          }else{
+            contentArr.push(value)
           }
         })
-        const content = messageArr.join(' ')
+        const content = contentArr.join(' ')
         postData.content = content;
         postData.notification.type = "incomingMessage"
         console.log(postData)
         wss.broadcast(JSON.stringify(postData))
-      } else if (regExGiphy.test(message)){
+
+      }else if(regExGiphy.test(message)){
         console.log('f u regEx !!!!!')
         let matches = message.match(regExGiphy)
         let qs = querystring.stringify({
@@ -64,7 +68,8 @@ ws.on('message', function incoming(data) {
         fetch(`https://api.giphy.com/v1/gifs/random?${qs}`)
           .then( res => {return res.json() })
           .then( json => {
-            postData['image_url'] = json.data.image_url
+            postData['image_url'] = []
+            postData.image_url.push(json.data.image_url)
             postData.content = ""
             postData.notification.type = "incomingMessage"
             console.log(postData)
@@ -86,7 +91,6 @@ ws.on('message', function incoming(data) {
       postData.user['numberOfUsers'] = usersOnline
       console.log(postData.user)
 
-
     if(!postData.user.color){
       colors =['red','purple','blue','green']
       let randomNum = Math.floor(colors.length*Math.random());
@@ -98,7 +102,6 @@ ws.on('message', function incoming(data) {
   }
 
 });
-
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
