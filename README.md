@@ -5,7 +5,7 @@ Chatty App is a single page app built with React.JS that allows users to post me
 
 ## Final Product
 
-!["Chatty App"]()
+!["Chatty App"](https://github.com/spierre95/chatty-app/blob/master/docs/chatty-app.png)
 
 
 ## Getting Started
