@@ -28,9 +28,9 @@ class App extends Component {
       content: newMessage,
       notification:{type:"postMessage"}
     }
-    console.log(messageObj)
+
     this.socket.send(JSON.stringify(messageObj));
-    console.log(this.state)
+
   }
 
   addUsername = (newUser) => {
@@ -44,20 +44,17 @@ class App extends Component {
     this.socket.send(JSON.stringify(updateUser));
   }
 
-
-// App.js
 componentDidMount() {
-  console.log("componentDidMount <App />");
   this.socket = new WebSocket("ws://localhost:3001");
 
   this.socket.onopen = (event) => {
-    console.log("Connected to server");
+
   };
 
   this.socket.onmessage = (event) => {
 
     const data = JSON.parse(event.data);
-    console.log(data ,'data')
+
     switch(data.notification.type) {
       case "incomingMessage":
       const messages = this.state.messages.concat(data)
