@@ -1,4 +1,3 @@
-// server.js
 const uuidv4 = require('uuid/v4');
 const express = require('express');
 const SocketServer = require('ws').Server;
@@ -18,24 +17,37 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
-wss.broadcast = function broadcast(data) {
+
+
+
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+
+  wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
       client.send(data);
   });
 };
 
-wss.on('connection', (ws) => {
-  console.log('Client connected');
 
- const usersOnline = wss.clients.size
 
 
 ws.on('message', function incoming(data) {
-
+  const usersOnline = wss.clients.size
   const postData = JSON.parse(data)
   const regEx = (/(http(s?):)|([/|.|\w|\s])*\.(?:jpg|gif|png)/)
   const regExGiphy = /^\/giphy (.+)$/
   const message = postData.content
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 
 
   if(postData.notification.type == "postMessage"){
@@ -54,17 +66,17 @@ ws.on('message', function incoming(data) {
         const content = contentArr.join(' ')
         postData.content = content;
         postData.notification.type = "incomingMessage"
-        console.log(postData)
+
         wss.broadcast(JSON.stringify(postData))
 
       }else if(regExGiphy.test(message)){
-        console.log('f u regEx !!!!!')
+
         let matches = message.match(regExGiphy)
         let qs = querystring.stringify({
           api_key: 'dc4dsGHOce3L60BgjeYercyZXVsg9L5k',
           tag: matches[1]
         });
-        console.log(qs)
+
         fetch(`https://api.giphy.com/v1/gifs/random?${qs}`)
           .then( res => {return res.json() })
           .then( json => {
@@ -72,31 +84,25 @@ ws.on('message', function incoming(data) {
             postData.image_url.push(json.data.image_url)
             postData.content = ""
             postData.notification.type = "incomingMessage"
-            console.log(postData)
             wss.broadcast(JSON.stringify(postData))
           })
       } else {
         postData.notification.type = "incomingMessage"
         postData['key'] = uuidv4();
-        console.log(postData)
         wss.broadcast(JSON.stringify(postData))
       }
 
   } else if(postData.notification.type == "postNotification"){
 
+
       console.log('postNotification',postData.notification.type)
 
       postData.notification['key'] = uuidv4();
       postData.notification.type = "incomingNotification"
-      postData.user['numberOfUsers'] = usersOnline
+      postData['numberOfUsers'] = usersOnline
       console.log(postData.user)
 
-    if(!postData.user.color){
-      colors =['red','purple','blue','green']
-      let randomNum = Math.floor(colors.length*Math.random());
-      postData.user.color = colors[randomNum]
-      colors.splice(randomNum, 1);
-    }
+      postData['color'] = getRandomColor()
 
     wss.broadcast(JSON.stringify(postData))
   }
